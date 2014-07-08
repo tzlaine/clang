@@ -276,6 +276,7 @@ public:
   static const TST TST_struct = clang::TST_struct;
   static const TST TST_interface = clang::TST_interface;
   static const TST TST_class = clang::TST_class;
+  static const TST TST_archetype = clang::TST_archetype;
   static const TST TST_typename = clang::TST_typename;
   static const TST TST_typeofType = clang::TST_typeofType;
   static const TST TST_typeofExpr = clang::TST_typeofExpr;
@@ -396,7 +397,7 @@ public:
   static bool isDeclRep(TST T) {
     return (T == TST_enum || T == TST_struct ||
             T == TST_interface || T == TST_union ||
-            T == TST_class);
+            T == TST_class || T == TST_archetype);
   }
 
   DeclSpec(AttributeFactory &attrFactory)

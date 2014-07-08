@@ -1541,6 +1541,7 @@ public:
   bool isDependentSizedArrayType() const;
   bool isRecordType() const;
   bool isClassType() const;
+  bool isArchetypeType() const;
   bool isStructureType() const;
   bool isInterfaceType() const;
   bool isStructureOrClassType() const;
@@ -3917,6 +3918,8 @@ enum TagTypeKind {
   TTK_Union,
   /// \brief The "class" keyword.
   TTK_Class,
+  /// \brief The "archetype" keyword.
+  TTK_Archetype,
   /// \brief The "enum" keyword.
   TTK_Enum
 };
@@ -3932,6 +3935,8 @@ enum ElaboratedTypeKeyword {
   ETK_Union,
   /// \brief The "class" keyword introduces the elaborated-type-specifier.
   ETK_Class,
+  /// \brief The "archetype" keyword introduces the elaborated-type-specifier.
+  ETK_Archetype,
   /// \brief The "enum" keyword introduces the elaborated-type-specifier.
   ETK_Enum,
   /// \brief The "typename" keyword precedes the qualified type name, e.g.,

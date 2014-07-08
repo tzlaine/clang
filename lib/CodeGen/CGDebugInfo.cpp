@@ -619,7 +619,7 @@ CGDebugInfo::getOrCreateRecordFwdDecl(const RecordType *Ty,
   else if (RD->isUnion())
     Tag = llvm::dwarf::DW_TAG_union_type;
   else {
-    assert(RD->isClass());
+    assert(RD->isClass() || RD->isArchetype());
     Tag = llvm::dwarf::DW_TAG_class_type;
   }
 
@@ -2255,7 +2255,7 @@ llvm::DICompositeType CGDebugInfo::CreateLimitedType(const RecordType *Ty) {
     RealDecl = DBuilder.createUnionType(RDContext, RDName, DefUnit, Line,
                                         Size, Align, 0, llvm::DIArray(), 0,
                                         FullName);
-  else if (RD->isClass()) {
+  else if (RD->isClass() || RD->isArchetype()) {
     // FIXME: This could be a struct type giving a default visibility different
     // than C++ class type, but needs llvm metadata changes first.
     RealDecl = DBuilder.createClassType(RDContext, RDName, DefUnit, Line,

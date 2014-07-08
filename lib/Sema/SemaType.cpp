@@ -881,6 +881,7 @@ static QualType ConvertDeclSpecToType(TypeProcessingState &state) {
     declarator.setInvalidType(true);
     break;
   case DeclSpec::TST_class:
+  case DeclSpec::TST_archetype:
   case DeclSpec::TST_enum:
   case DeclSpec::TST_union:
   case DeclSpec::TST_struct:
@@ -2175,7 +2176,7 @@ static QualType GetDeclSpecTypeForDeclarator(TypeProcessingState &state,
     case Declarator::LambdaExprParameterContext:
       if (!(SemaRef.getLangOpts().CPlusPlus1y 
               && D.getDeclSpec().getTypeSpecType() == DeclSpec::TST_auto))
-        Error = 14;
+        Error = 15;
       break;
     case Declarator::MemberContext:
       if (D.getDeclSpec().getStorageClassSpec() == DeclSpec::SCS_static)
@@ -2185,36 +2186,37 @@ static QualType GetDeclSpecTypeForDeclarator(TypeProcessingState &state,
       case TTK_Struct: Error = 1; /* Struct member */ break;
       case TTK_Union:  Error = 2; /* Union member */ break;
       case TTK_Class:  Error = 3; /* Class member */ break;
-      case TTK_Interface: Error = 4; /* Interface member */ break;
+      case TTK_Archetype: Error = 4; /* Interface member */ break;
+      case TTK_Interface: Error = 5; /* Interface member */ break;
       }
       break;
     case Declarator::CXXCatchContext:
     case Declarator::ObjCCatchContext:
-      Error = 5; // Exception declaration
+      Error = 6; // Exception declaration
       break;
     case Declarator::TemplateParamContext:
-      Error = 6; // Template parameter
+      Error = 7; // Template parameter
       break;
     case Declarator::BlockLiteralContext:
-      Error = 7; // Block literal
+      Error = 8; // Block literal
       break;
     case Declarator::TemplateTypeArgContext:
-      Error = 8; // Template type argument
+      Error = 9; // Template type argument
       break;
     case Declarator::AliasDeclContext:
     case Declarator::AliasTemplateContext:
-      Error = 10; // Type alias
+      Error = 11; // Type alias
       break;
     case Declarator::TrailingReturnContext:
       if (!SemaRef.getLangOpts().CPlusPlus1y)
-        Error = 11; // Function return type
+        Error = 12; // Function return type
       break;
     case Declarator::ConversionIdContext:
       if (!SemaRef.getLangOpts().CPlusPlus1y)
-        Error = 12; // conversion-type-id
+        Error = 13; // conversion-type-id
       break;
     case Declarator::TypeNameContext:
-      Error = 13; // Generic
+      Error = 14; // Generic
       break;
     case Declarator::FileContext:
     case Declarator::BlockContext:
@@ -2225,11 +2227,11 @@ static QualType GetDeclSpecTypeForDeclarator(TypeProcessingState &state,
     }
 
     if (D.getDeclSpec().getStorageClassSpec() == DeclSpec::SCS_typedef)
-      Error = 9;
+      Error = 10;
 
     // In Objective-C it is an error to use 'auto' on a function declarator.
     if (D.isFunctionDeclarator())
-      Error = 11;
+      Error = 12;
 
     // C++11 [dcl.spec.auto]p2: 'auto' is always fine if the declarator
     // contains a trailing return type. That is only legal at the outermost

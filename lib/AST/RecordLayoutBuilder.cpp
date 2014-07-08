@@ -1880,6 +1880,7 @@ static unsigned getPaddingDiagFromTagKind(TagTypeKind Tag) {
   case TTK_Struct: return 0;
   case TTK_Interface: return 1;
   case TTK_Class: return 2;
+  case TTK_Archetype: return 2;
   default: llvm_unreachable("Invalid tag kind for field padding diagnostic!");
   }
 }

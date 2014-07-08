@@ -3119,6 +3119,7 @@ static bool CheckUnaryTypeTraitTypeCompleteness(Sema &S, TypeTrait UTT,
   case UTT_IsEnum:
   case UTT_IsUnion:
   case UTT_IsClass:
+  case UTT_IsArchetype:
   case UTT_IsFunction:
   case UTT_IsReference:
   case UTT_IsArithmetic:
@@ -3257,7 +3258,7 @@ static bool EvaluateUnaryTypeTrait(Sema &Self, TypeTrait UTT,
   case UTT_IsUnion:
     return T->isUnionType();
   case UTT_IsClass:
-    return T->isClassType() || T->isStructureType() || T->isInterfaceType();
+    return T->isClassType() || T->isArchetypeType() || T->isStructureType() || T->isInterfaceType();
   case UTT_IsFunction:
     return T->isFunctionType();
 

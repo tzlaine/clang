@@ -34,6 +34,7 @@ namespace clang {
     UTT_IsArithmetic,
     UTT_IsArray,
     UTT_IsClass,
+    UTT_IsArchetype,
     UTT_IsCompleteType,
     UTT_IsCompound,
     UTT_IsConst,

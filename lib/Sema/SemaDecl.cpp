@@ -387,11 +387,11 @@ ParsedType Sema::ActOnDelayedDefaultTemplateArg(const IdentifierInfo &II,
   return CreateParsedType(T, Builder.getTypeSourceInfo(Context, T));
 }
 
-/// isTagName() - This method is called *for error recovery purposes only*
-/// to determine if the specified name is a valid tag name ("struct foo").  If
+/// isTagName() - This method is called *for error recovery purposes only* to
+/// determine if the specified name is a valid tag name ("struct foo").  If
 /// so, this returns the TST for the tag corresponding to it (TST_enum,
-/// TST_union, TST_struct, TST_interface, TST_class).  This is used to diagnose
-/// cases in C where the user forgot to specify the tag.
+/// TST_union, TST_struct, TST_interface, TST_class, TST_archetype).  This is
+/// used to diagnose cases in C where the user forgot to specify the tag.
 DeclSpec::TST Sema::isTagName(IdentifierInfo &II, Scope *S) {
   // Do a tag name lookup in this scope.
   LookupResult R(*this, &II, SourceLocation(), LookupTagName);
@@ -404,6 +404,7 @@ DeclSpec::TST Sema::isTagName(IdentifierInfo &II, Scope *S) {
       case TTK_Interface: return DeclSpec::TST_interface;
       case TTK_Union:  return DeclSpec::TST_union;
       case TTK_Class:  return DeclSpec::TST_class;
+      case TTK_Archetype: return DeclSpec::TST_archetype;
       case TTK_Enum:   return DeclSpec::TST_enum;
       }
     }
@@ -559,6 +560,10 @@ static bool isTagTypeWithMissingTag(Sema &SemaRef, LookupResult &Result,
     switch (Tag->getTagKind()) {
       case TTK_Class:
         FixItTagName = "class ";
+        break;
+
+      case TTK_Archetype:
+        FixItTagName = "archetype ";
         break;
 
       case TTK_Enum:
@@ -3240,6 +3245,7 @@ Decl *Sema::ParsedFreeStandingDeclSpec(Scope *S, AccessSpecifier AS,
   Decl *TagD = nullptr;
   TagDecl *Tag = nullptr;
   if (DS.getTypeSpecType() == DeclSpec::TST_class ||
+      DS.getTypeSpecType() == DeclSpec::TST_archetype ||
       DS.getTypeSpecType() == DeclSpec::TST_struct ||
       DS.getTypeSpecType() == DeclSpec::TST_interface ||
       DS.getTypeSpecType() == DeclSpec::TST_union ||
@@ -3280,9 +3286,10 @@ Decl *Sema::ParsedFreeStandingDeclSpec(Scope *S, AccessSpecifier AS,
     if (Tag)
       Diag(DS.getConstexprSpecLoc(), diag::err_constexpr_tag)
         << (DS.getTypeSpecType() == DeclSpec::TST_class ? 0 :
-            DS.getTypeSpecType() == DeclSpec::TST_struct ? 1 :
-            DS.getTypeSpecType() == DeclSpec::TST_interface ? 2 :
-            DS.getTypeSpecType() == DeclSpec::TST_union ? 3 : 4);
+            DS.getTypeSpecType() == DeclSpec::TST_archetype ? 1 :
+            DS.getTypeSpecType() == DeclSpec::TST_struct ? 2 :
+            DS.getTypeSpecType() == DeclSpec::TST_interface ? 3 :
+            DS.getTypeSpecType() == DeclSpec::TST_union ? 4 : 5);
     else
       Diag(DS.getConstexprSpecLoc(), diag::err_constexpr_no_declarators);
     // Don't emit warnings after this error.
@@ -3310,9 +3317,10 @@ Decl *Sema::ParsedFreeStandingDeclSpec(Scope *S, AccessSpecifier AS,
     // Per C++ [dcl.enum]p1, an opaque-enum-declaration can't either.
     Diag(SS.getBeginLoc(), diag::err_standalone_class_nested_name_specifier)
       << (DS.getTypeSpecType() == DeclSpec::TST_class ? 0 :
-          DS.getTypeSpecType() == DeclSpec::TST_struct ? 1 :
-          DS.getTypeSpecType() == DeclSpec::TST_interface ? 2 :
-          DS.getTypeSpecType() == DeclSpec::TST_union ? 3 : 4)
+          DS.getTypeSpecType() == DeclSpec::TST_archetype ? 1 :
+          DS.getTypeSpecType() == DeclSpec::TST_struct ? 2 :
+          DS.getTypeSpecType() == DeclSpec::TST_interface ? 3 :
+          DS.getTypeSpecType() == DeclSpec::TST_union ? 4 : 5)
       << SS.getRange();
     return nullptr;
   }
@@ -3438,6 +3446,7 @@ Decl *Sema::ParsedFreeStandingDeclSpec(Scope *S, AccessSpecifier AS,
   if (!DS.getAttributes().empty()) {
     DeclSpec::TST TypeSpecType = DS.getTypeSpecType();
     if (TypeSpecType == DeclSpec::TST_class ||
+        TypeSpecType == DeclSpec::TST_archetype ||
         TypeSpecType == DeclSpec::TST_struct ||
         TypeSpecType == DeclSpec::TST_interface ||
         TypeSpecType == DeclSpec::TST_union ||
@@ -3447,9 +3456,10 @@ Decl *Sema::ParsedFreeStandingDeclSpec(Scope *S, AccessSpecifier AS,
         Diag(attrs->getLoc(), diag::warn_declspec_attribute_ignored)
         << attrs->getName()
         << (TypeSpecType == DeclSpec::TST_class ? 0 :
-            TypeSpecType == DeclSpec::TST_struct ? 1 :
-            TypeSpecType == DeclSpec::TST_union ? 2 :
-            TypeSpecType == DeclSpec::TST_interface ? 3 : 4);
+            TypeSpecType == DeclSpec::TST_archetype ? 1 :
+            TypeSpecType == DeclSpec::TST_struct ? 2 :
+            TypeSpecType == DeclSpec::TST_union ? 3 :
+            TypeSpecType == DeclSpec::TST_interface ? 4 : 5);
         attrs = attrs->getNext();
       }
     }
@@ -10424,7 +10434,8 @@ TypedefDecl *Sema::ParseTypedefDecl(Scope *S, Declarator &D, QualType T,
   case TST_struct:
   case TST_interface:
   case TST_union:
-  case TST_class: {
+  case TST_class:
+  case TST_archetype: {
     TagDecl *tagFromDeclSpec = cast<TagDecl>(D.getDeclSpec().getRepAsDecl());
 
     // Do nothing if the tag is not anonymous or already has an

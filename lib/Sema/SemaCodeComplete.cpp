@@ -1119,6 +1119,7 @@ bool ResultBuilder::IsClassOrStruct(const NamedDecl *ND) const {
   // For purposes of this check, interfaces match too.
   if (const RecordDecl *RD = dyn_cast<RecordDecl>(ND))
     return RD->getTagKind() == TTK_Class ||
+    RD->getTagKind() == TTK_Archetype ||
     RD->getTagKind() == TTK_Struct ||
     RD->getTagKind() == TTK_Interface;
   
@@ -1483,6 +1484,7 @@ static const char *GetCompletionTypeString(QualType T,
           case TTK_Struct: return "struct <anonymous>";
           case TTK_Interface: return "__interface <anonymous>";
           case TTK_Class:  return "class <anonymous>";
+          case TTK_Archetype: return "archetype <anonymous>";
           case TTK_Union:  return "union <anonymous>";
           case TTK_Enum:   return "enum <anonymous>";
           }
@@ -2968,10 +2970,11 @@ CXCursorKind clang::getCursorKindForDecl(const Decl *D) {
       if (const TagDecl *TD = dyn_cast<TagDecl>(D)) {
         switch (TD->getTagKind()) {
           case TTK_Interface:  // fall through
-          case TTK_Struct: return CXCursor_StructDecl;
-          case TTK_Class:  return CXCursor_ClassDecl;
-          case TTK_Union:  return CXCursor_UnionDecl;
-          case TTK_Enum:   return CXCursor_EnumDecl;
+          case TTK_Struct:  return CXCursor_StructDecl;
+          case TTK_Archetype:  // fall through
+          case TTK_Class:   return CXCursor_ClassDecl;
+          case TTK_Union:   return CXCursor_UnionDecl;
+          case TTK_Enum:    return CXCursor_EnumDecl;
         }
       }
   }
@@ -3663,6 +3666,7 @@ void Sema::CodeCompleteTag(Scope *S, unsigned TagSpec) {
     
   case DeclSpec::TST_struct:
   case DeclSpec::TST_class:
+  case DeclSpec::TST_archetype:
   case DeclSpec::TST_interface:
     Filter = &ResultBuilder::IsClassOrStruct;
     ContextKind = CodeCompletionContext::CCC_ClassOrStructTag;

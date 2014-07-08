@@ -1573,7 +1573,7 @@ def err_new_array_of_auto : Error<
 def err_auto_not_allowed : Error<
   "%select{'auto'|'decltype(auto)'}0 not allowed %select{in function prototype"
   "|in non-static struct member"
-  "|in non-static union member|in non-static class member|in interface member"
+  "|in non-static union member|in non-static class member|in archetype member|in interface member"
   "|in exception declaration|in template parameter|in block literal"
   "|in template argument|in typedef|in type alias|in function return type"
   "|in conversion function type|here|in lambda parameter}1">;
@@ -1758,7 +1758,7 @@ def err_invalid_constexpr : Error<
 def err_invalid_constexpr_member : Error<"non-static data member cannot be "
   "constexpr%select{; did you intend to make it %select{const|static}0?|}1">;
 def err_constexpr_tag : Error<
-  "%select{class|struct|interface|union|enum}0 cannot be marked constexpr">;
+  "%select{class|archetype|struct|interface|union|enum}0 cannot be marked constexpr">;
 def err_constexpr_dtor : Error<"destructor cannot be marked constexpr">;
 def err_constexpr_no_declarators : Error<
   "constexpr can only be used in variable and function declarations">;
@@ -2079,7 +2079,7 @@ def err_attribute_invalid_on_stmt : Error<
   "%0 attribute cannot be applied to a statement">;
 def warn_declspec_attribute_ignored : Warning<
   "attribute %0 is ignored, place it after "
-  "\"%select{class|struct|union|interface|enum}1\" to apply attribute to "
+  "\"%select{class|archetype|struct|union|interface|enum}1\" to apply attribute to "
   "type declaration">, InGroup<IgnoredAttributes>;
 def warn_attribute_precede_definition : Warning<
   "attribute declaration must precede definition">,
@@ -3865,7 +3865,7 @@ def err_tag_reference_conflict : Error<
   "%select{a declaration|a typedef|a type alias|a template}0 of the same name">;
 def err_dependent_tag_decl : Error<
   "%select{declaration|definition}0 of "
-  "%select{struct|interface|union|class|enum}1 in a dependent scope">;
+  "%select{struct|interface|union|class|archetype|enum}1 in a dependent scope">;
 def err_tag_definition_of_typedef : Error<
   "definition of type %0 conflicts with %select{typedef|type alias}1 of the same name">;
 def err_conflicting_types : Error<"conflicting types for %0">;
@@ -3927,11 +3927,11 @@ def warn_array_new_too_large : Warning<"array is too large (%0 elements)">,
 
 // -Wpadded, -Wpacked
 def warn_padded_struct_field : Warning<
-  "padding %select{struct|interface|class}0 %1 with %2 "
+  "padding %select{struct|interface|class|archetype}0 %1 with %2 "
   "%select{byte|bit}3%select{|s}4 to align %5">,
   InGroup<Padded>, DefaultIgnore;
 def warn_padded_struct_anon_field : Warning<
-  "padding %select{struct|interface|class}0 %1 with %2 "
+  "padding %select{struct|interface|class|archetype}0 %1 with %2 "
   "%select{byte|bit}3%select{|s}4 to align anonymous bit-field">,
   InGroup<Padded>, DefaultIgnore;
 def warn_padded_struct_size : Warning<
@@ -4741,7 +4741,7 @@ def warn_standalone_specifier : Warning<"'%0' ignored on this declaration">,
 def ext_standalone_specifier : ExtWarn<"'%0' is not permitted on a declaration "
   "of a type">, InGroup<MissingDeclarations>;
 def err_standalone_class_nested_name_specifier : Error<
-  "forward declaration of %select{class|struct|interface|union|enum}0 cannot "
+  "forward declaration of %select{class|archetype|struct|interface|union|enum}0 cannot "
   "have a nested name specifier">;
 def err_typecheck_sclass_func : Error<"illegal storage class on function">;
 def err_static_block_func : Error<
@@ -5443,7 +5443,7 @@ def err_invalid_declarator_in_function : Error<
 def err_invalid_declarator_in_block : Error<
   "definition or redeclaration of %0 not allowed inside a block">;
 def err_not_tag_in_scope : Error<
-  "no %select{struct|interface|union|class|enum}0 named %1 in %2">;
+  "no %select{struct|interface|union|class|archetype|enum}0 named %1 in %2">;
 
 def err_no_typeid_with_fno_rtti : Error<
   "cannot use typeid with -fno-rtti">;
@@ -7164,7 +7164,7 @@ def err_module_private_local : Error<
   "%select{local variable|parameter|typedef}0 %1 cannot be declared "
   "__module_private__">;
 def err_module_private_local_class : Error<
-  "local %select{struct|interface|union|class|enum}0 cannot be declared "
+  "local %select{struct|interface|union|class|archetype|enum}0 cannot be declared "
   "__module_private__">;
 def err_module_private_declaration : Error<
   "declaration of %0 must be imported from module '%1' before it is required">;

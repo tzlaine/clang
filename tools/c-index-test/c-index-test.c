@@ -2675,6 +2675,7 @@ static const char *getEntityKindString(CXIdxEntityKind kind) {
   case CXIdxEntity_Struct: return "struct";
   case CXIdxEntity_Union: return "union";
   case CXIdxEntity_CXXClass: return "c++-class";
+  case CXIdxEntity_CXXArchetype: return "c++-archetype";
   case CXIdxEntity_CXXNamespace: return "namespace";
   case CXIdxEntity_CXXNamespaceAlias: return "namespace-alias";
   case CXIdxEntity_CXXStaticVariable: return "c++-static-var";

@@ -367,6 +367,11 @@ bool Type::isClassType() const {
     return RT->getDecl()->isClass();
   return false;
 }
+bool Type::isArchetypeType() const {
+  if (const RecordType *RT = getAs<RecordType>())
+    return RT->getDecl()->isArchetype();
+  return false;
+}
 bool Type::isStructureType() const {
   if (const RecordType *RT = getAs<RecordType>())
     return RT->getDecl()->isStruct();
@@ -380,7 +385,7 @@ bool Type::isInterfaceType() const {
 bool Type::isStructureOrClassType() const {
   if (const RecordType *RT = getAs<RecordType>())
     return RT->getDecl()->isStruct() || RT->getDecl()->isClass() ||
-      RT->getDecl()->isInterface();
+      RT->getDecl()->isInterface() || RT->getDecl()->isArchetype();
   return false;
 }
 bool Type::isVoidPointerType() const {
@@ -1368,6 +1373,7 @@ TypeWithKeyword::getKeywordForTypeSpec(unsigned TypeSpec) {
   default: return ETK_None;
   case TST_typename: return ETK_Typename;
   case TST_class: return ETK_Class;
+  case TST_archetype: return ETK_Archetype;
   case TST_struct: return ETK_Struct;
   case TST_interface: return ETK_Interface;
   case TST_union: return ETK_Union;
@@ -1379,6 +1385,7 @@ TagTypeKind
 TypeWithKeyword::getTagTypeKindForTypeSpec(unsigned TypeSpec) {
   switch(TypeSpec) {
   case TST_class: return TTK_Class;
+  case TST_archetype: return TTK_Archetype;
   case TST_struct: return TTK_Struct;
   case TST_interface: return TTK_Interface;
   case TST_union: return TTK_Union;
@@ -1392,6 +1399,7 @@ ElaboratedTypeKeyword
 TypeWithKeyword::getKeywordForTagTypeKind(TagTypeKind Kind) {
   switch (Kind) {
   case TTK_Class: return ETK_Class;
+  case TTK_Archetype: return ETK_Archetype;
   case TTK_Struct: return ETK_Struct;
   case TTK_Interface: return ETK_Interface;
   case TTK_Union: return ETK_Union;
@@ -1404,6 +1412,7 @@ TagTypeKind
 TypeWithKeyword::getTagTypeKindForKeyword(ElaboratedTypeKeyword Keyword) {
   switch (Keyword) {
   case ETK_Class: return TTK_Class;
+  case ETK_Archetype: return TTK_Archetype;
   case ETK_Struct: return TTK_Struct;
   case ETK_Interface: return TTK_Interface;
   case ETK_Union: return TTK_Union;
@@ -1422,6 +1431,7 @@ TypeWithKeyword::KeywordIsTagTypeKind(ElaboratedTypeKeyword Keyword) {
   case ETK_Typename:
     return false;
   case ETK_Class:
+  case ETK_Archetype:
   case ETK_Struct:
   case ETK_Interface:
   case ETK_Union:
@@ -1436,6 +1446,7 @@ StringRef TypeWithKeyword::getKeywordName(ElaboratedTypeKeyword Keyword) {
   case ETK_None: return "";
   case ETK_Typename: return "typename";
   case ETK_Class:  return "class";
+  case ETK_Archetype:  return "archetype";
   case ETK_Struct: return "struct";
   case ETK_Interface: return "__interface";
   case ETK_Union:  return "union";

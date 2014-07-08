@@ -1731,6 +1731,7 @@ void MicrosoftCXXNameMangler::mangleType(const TagDecl *TD) {
       Out << 'U';
       break;
     case TTK_Class:
+    case TTK_Archetype:
       Out << 'V';
       break;
     case TTK_Enum:

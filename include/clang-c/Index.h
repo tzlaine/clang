@@ -1707,7 +1707,7 @@ enum CXCursorKind {
    * context, e.g., a C++ lambda capture list.
    */
   CXCursor_VariableRef                   = 50,
-  
+
   CXCursor_LastRef                       = CXCursor_VariableRef,
 
   /* Error conditions */
@@ -5000,7 +5000,8 @@ typedef enum {
   CXIdxEntity_CXXDestructor         = 23,
   CXIdxEntity_CXXConversionFunction = 24,
   CXIdxEntity_CXXTypeAlias          = 25,
-  CXIdxEntity_CXXInterface          = 26
+  CXIdxEntity_CXXInterface          = 26,
+  CXIdxEntity_CXXArchetype          = 27
 
 } CXIdxEntityKind;
 

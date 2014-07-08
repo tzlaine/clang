@@ -2722,6 +2722,7 @@ public:
   bool isStruct() const { return getTagKind() == TTK_Struct; }
   bool isInterface() const { return getTagKind() == TTK_Interface; }
   bool isClass()  const { return getTagKind() == TTK_Class; }
+  bool isArchetype() const { return getTagKind() == TTK_Archetype; }
   bool isUnion()  const { return getTagKind() == TTK_Union; }
   bool isEnum()   const { return getTagKind() == TTK_Enum; }
 
